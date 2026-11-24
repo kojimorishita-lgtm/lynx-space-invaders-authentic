@@ -1,0 +1,19 @@
+# The builder's own arcade ROM set: verified by hash at build
+# time, never committed.
+rom/
+
+# Optional sampled sounds (see tools/gen_sound_data.py):
+# converted at build time, never committed.
+sounds/
+
+# Everything generated at build time.
+generated/
+build/
+out/
+
+# Compiler by-products.
+*.lnx
+*.o
+*.map
+*.dbg
+__pycache__/
