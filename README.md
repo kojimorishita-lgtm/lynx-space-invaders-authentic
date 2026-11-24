@@ -13,6 +13,16 @@ thought to have little expressive power — and to create
 something that has never existed before. Every design
 decision in this port followed that policy.
 
+## Screenshots
+
+Title screen (attract mode):
+
+![Title screen](screenshot-title.png)
+
+In game:
+
+![Gameplay](screenshot-game.png)
+
 ## What you need
 
 - Your own copy of the ROM set of the original arcade
