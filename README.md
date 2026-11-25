@@ -23,6 +23,8 @@ In game:
 
 ![Gameplay](screenshot-game.png)
 
+Gameplay video: [YouTube Shorts](https://www.youtube.com/shorts/PEMnWURJLio)
+
 ## What you need
 
 - Your own copy of the ROM set of the original arcade

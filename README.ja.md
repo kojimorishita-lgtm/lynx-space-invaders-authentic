@@ -21,6 +21,8 @@
 
 ![プレイ画面](screenshot-game.png)
 
+動作動画：[YouTube Shorts](https://www.youtube.com/shorts/PEMnWURJLio)
+
 ## ビルドに必要なもの
 
 - アーケード版基板のROMセット（TAITO/Midway、1978年、
