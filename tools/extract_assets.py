@@ -19,7 +19,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from verify_rom import load_image
+from romsets import open_rom
 
 
 def fmt_bytes(vals, per=8, indent="    "):
@@ -33,17 +33,25 @@ def fmt_bytes(vals, per=8, indent="    "):
 def main():
     here = os.path.dirname(os.path.abspath(__file__))
     root = os.path.dirname(here)
-    img = load_image(os.path.join(root, "rom"))
+    img, offsets, bank_sha, bank_src = open_rom(os.path.join(root, "rom"))
 
-    font = [img[0x1E00 + i * 8:0x1E00 + i * 8 + 8] for i in range(42)]
-    ufo_bcd = img[0x1D54:0x1D54 + 16]
+    f0 = offsets["font"]
+    font = [img[f0 + i * 8:f0 + i * 8 + 8] for i in range(42)]
+    a = offsets["ufo_points"]
+    ufo_bcd = img[a:a + 16]
     ufo_points = [((b >> 4) * 10 + (b & 0x0F)) * 10 for b in ufo_bcd[:15]]
-    demo_cmds = list(img[0x1F74:0x1F74 + 10])
-    col_fire = list(img[0x1D00:0x1D00 + 32])
-    march_thr = list(img[0x1A11:0x1A11 + 16])
-    march_del = list(img[0x1A21:0x1A21 + 16])
-    reload_tab = list(img[0x1CB8:0x1CB8 + 4])
-    reload_rates = list(img[0x1AA1:0x1AA1 + 5])
+    a = offsets["demo_cmds"]
+    demo_cmds = list(img[a:a + 10])
+    a = offsets["col_fire"]
+    col_fire = list(img[a:a + 32])
+    a = offsets["march_thr"]
+    march_thr = list(img[a:a + 16])
+    a = offsets["march_del"]
+    march_del = list(img[a:a + 16])
+    a = offsets["reload_tab"]
+    reload_tab = list(img[a:a + 4])
+    a = offsets["reload_rates"]
+    reload_rates = list(img[a:a + 5])
     # The arcade compares the BCD high byte of the score against
     # reload_tab; the port compares the integer score, so a BCD
     # threshold byte B becomes the integer bound bcd(B)*100+99
@@ -54,7 +62,9 @@ def main():
     lines = []
     lines.append("/* GENERATED from the builder's own ROM by "
                  "tools/extract_assets.py.")
-    lines.append(" * Do not edit; do not commit (this file is gitignored). */")
+    lines.append(" * Do not edit; do not commit (this file is gitignored).")
+    lines.append(f" * Source bank SHA-256: {bank_sha}")
+    lines.append(f" * (identified in rom/ as: {bank_src}). */")
     lines.append("")
     lines.append("/* Arcade font, ROM $1E00: 42 glyphs x 8 bytes.")
     lines.append(" * byte = column (left to right), bit 0 = bottom row.")
@@ -79,14 +89,16 @@ def main():
     lines.append("static const unsigned char col_fire_table[32]={")
     lines.append(fmt_bytes(col_fire) + "};")
     lines.append("")
-    lines.append("/* Fleet march: enemy-count thresholds, ROM $1A11, and")
-    lines.append(" * the matching delay table, ROM $1A21. */")
+    lines.append(f"/* Fleet march: enemy-count thresholds, ROM "
+                 f"${offsets['march_thr']:04X}, and")
+    lines.append(f" * the matching delay table, ROM "
+                 f"${offsets['march_del']:04X}. */")
     lines.append("static const unsigned char march_thresholds[16]={")
     lines.append(fmt_bytes(march_thr) + "};")
     lines.append("static const unsigned char march_delays[16]={")
     lines.append(fmt_bytes(march_del) + "};")
     lines.append("")
-    lines.append("/* First march delay (ROM $1A21[0]), as a macro: main.c")
+    lines.append(f"/* First march delay (ROM ${offsets['march_del']:04X}[0]), as a macro: main.c")
     lines.append(" * uses it inside a static initializer. */")
     lines.append(f"#define ROM_MARCH_DELAY_FIRST {march_del[0]}")
     lines.append("")

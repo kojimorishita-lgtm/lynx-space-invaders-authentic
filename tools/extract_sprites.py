@@ -28,7 +28,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from verify_rom import load_image
+from romsets import open_rom
 
 # Port-original: rolling bullet, 4 frames of 5 rows, bits 4/2/1 =
 # the three portrait columns.
@@ -100,14 +100,14 @@ def fmt_frames(frames):
 def main():
     here = os.path.dirname(os.path.abspath(__file__))
     root = os.path.dirname(here)
-    img = load_image(os.path.join(root, "rom"))
+    img, offsets, bank_sha, bank_src = open_rom(os.path.join(root, "rom"))
 
-    squiggly = shot_pattern(img, 0x1CD0)
+    squiggly = shot_pattern(img, offsets["squiggly"])
     bomb_bits = [ROLLING, PLUNGER, squiggly]
     bomb_spr = [suzy_pack(p) for p in bomb_bits]
 
     # UFO explosion: 24x8 -> 12x6, column pairs OR-ed, rows k6..k1.
-    exp = grid(img, 0x1D7C, 24)
+    exp = grid(img, offsets["saucer_exp"], 24)
     exp12 = [[exp[r][c] | exp[r][c + 1] for c in range(0, 24, 2)]
              for r in range(1, 7)]
     exp_runs = runs_of(exp12)
@@ -115,7 +115,9 @@ def main():
     lines = []
     lines.append("/* GENERATED from the builder's own ROM by "
                  "tools/extract_sprites.py.")
-    lines.append(" * Do not edit; do not commit (this file is gitignored). */")
+    lines.append(" * Do not edit; do not commit (this file is gitignored).")
+    lines.append(f" * Source bank SHA-256: {bank_sha}")
+    lines.append(f" * (identified in rom/ as: {bank_src}). */")
     lines.append("")
     lines.append("/* Enemy bullet patterns: 3 types x 4 frames x 5 rows,")
     lines.append(" * bits 4/2/1 = the three portrait columns.")

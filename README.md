@@ -27,13 +27,16 @@ Gameplay video: [YouTube Shorts](https://www.youtube.com/shorts/PEMnWURJLio)
 
 ## What you need
 
-- Your own copy of the ROM set of the original arcade
-  board (TAITO/Midway, 1978): four 2 KiB files (see
-  "Build" below for which files). **This repository
-  contains no arcade data at all.** The ROM is verified
-  by SHA-256 at build time and the data the game needs
-  is generated from it on your machine; without the
-  right ROM the build stops.
+- Your own copy of the ROM of an arcade Space Invaders
+  board. Only the final 2 KiB bank ($1800–$1FFF) is
+  used. Supported are the original board (TAITO/Midway,
+  1978) and the board variants whose final bank matches
+  one of the known banks. **This repository contains no
+  arcade data at all.** The build identifies that bank
+  by its SHA-256 — by content, never by file name — and
+  generates the data the game needs from it on your
+  machine; with an unknown bank the build stops and
+  reports what it found.
 - A Linux environment with cc65 2.19, Python 3 and GNU
   make. Developed and tested on Ubuntu 24.04; the
   maintainer builds on Windows 11 with WSL2 (Ubuntu).
@@ -52,22 +55,24 @@ If you have the source as a .zip archive, it extracts into
 a folder named `lynx-space-invaders-authentic/`. Do all of
 the following inside that folder.
 
-1. Place the four ROM files of the original arcade board
-   in `rom/`. They are the game's program ROMs, one file
-   per 2 KiB bank:
+1. Place the ROM file(s) of the arcade board in `rom/`.
+   File names do not matter, and neither does the layout:
+   the bank may be a single 2 KiB file, two 1 KiB halves,
+   or part of a larger file. The build scans everything
+   in `rom/`, hashes the content, and picks out the
+   final 2 KiB bank ($1800–$1FFF).
 
-   | file         | address range | SHA-256 (first 16) |
-   |--------------|---------------|--------------------|
-   | `invaders.h` | $0000 – $07FF | `1dfb19b1eeeac5b9` |
-   | `invaders.g` | $0800 – $0FFF | `ac7031b046274d4c` |
-   | `invaders.f` | $1000 – $17FF | `5c8e573ebde9a673` |
-   | `invaders.e` | $1800 – $1FFF | `0a97ed62e2063c13` |
+   The known banks are listed in `tools/romsets.py` (as
+   SHA-256 hashes only). They cover the original set,
+   the board variants whose extracted data is identical,
+   and variants that differ only in the font — with one
+   of those, the game is built with that variant's font.
 
-   If you are not sure your files are the right ones, just
-   run the build: the first step compares the full SHA-256
-   of each file (the full hashes are in
-   `tools/verify_rom.py`) and stops, naming the file that
-   does not match.
+   If no known bank is found, the build stops at the
+   first step and reports the size and SHA-256 of every
+   file it saw. Variants whose data differs in game
+   behaviour are not supported and stop the build the
+   same way.
 
 2. Optional, for sound: create a `sounds/` folder next
    to `rom/` and put the ten WAV files listed under
