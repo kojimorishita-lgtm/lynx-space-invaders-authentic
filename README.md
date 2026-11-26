@@ -23,7 +23,7 @@ In game:
 
 ![Gameplay](screenshot-game.png)
 
-Gameplay video: [YouTube Shorts](https://www.youtube.com/shorts/PEMnWURJLio)
+Gameplay video: [YouTube](https://youtu.be/5lrpeGdpp2s)
 
 ## What you need
 

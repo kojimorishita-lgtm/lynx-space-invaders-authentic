@@ -21,7 +21,7 @@
 
 ![プレイ画面](screenshot-game.png)
 
-動作動画：[YouTube Shorts](https://www.youtube.com/shorts/PEMnWURJLio)
+動作動画：[YouTube](https://youtu.be/5lrpeGdpp2s)
 
 ## ビルドに必要なもの
 

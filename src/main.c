@@ -2858,7 +2858,7 @@ static void attract_scene_credit(unsigned char page) {
         draw_small_text("1 PLAYER ONLY",25,84);
         draw_small_text("*1 PLAYER 0 COIN",19,96);
     } else {
-        draw_small_text("INSERT COIN",29,64);
+        draw_small_text("SKIP THE COIN",25,64);
         draw_small_text("<1 OR 2 PLAYERS>",19,84);
         draw_small_text("*1 PLAYER 1 COIN",19,96);
     }
